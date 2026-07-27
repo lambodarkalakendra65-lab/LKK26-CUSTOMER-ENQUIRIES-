@@ -14,6 +14,7 @@
             --maroon-red: #880e4f;
             --bg-cream: #fff8e1;
             --text-dark: #3e2723;
+            --border-line: #ffe0b2;
         }
 
         * { box-sizing: border-box; }
@@ -26,66 +27,68 @@
             padding: 12px;
         }
 
-        .container { max-width: 1150px; margin: 0 auto; }
+        .container { max-width: 1200px; margin: 0 auto; }
 
         header {
             text-align: center;
             background: linear-gradient(135deg, var(--deep-saffron), var(--maroon-red));
             color: white;
-            padding: 15px 10px;
+            padding: 16px 12px;
             border-radius: 12px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(136, 14, 79, 0.2);
         }
 
-        header h1 { margin: 0; font-size: 1.6rem; }
-        header p { margin: 4px 0 0 0; font-size: 0.85rem; color: var(--accent-yellow); }
+        header h1 { margin: 0; font-size: 1.7rem; letter-spacing: 0.5px; }
+        header p { margin: 4px 0 0 0; font-size: 0.88rem; color: var(--accent-yellow); font-weight: 500; }
 
         .card {
-            background: white;
-            padding: 15px;
+            background: #ffffff;
+            padding: 18px;
             border-radius: 12px;
-            border-top: 4px solid var(--primary-orange);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            margin-bottom: 15px;
+            border-top: 5px solid var(--primary-orange);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+            margin-bottom: 16px;
         }
 
         .card h2 {
             margin-top: 0;
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             color: var(--maroon-red);
             border-bottom: 2px solid var(--accent-yellow);
-            padding-bottom: 6px;
+            padding-bottom: 8px;
         }
 
         .section-title {
-            font-size: 0.95rem;
-            font-weight: bold;
+            font-size: 0.9rem;
+            font-weight: 700;
             color: var(--deep-saffron);
-            margin: 10px 0 8px 0;
+            margin: 12px 0 8px 0;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .form-grid {
             display: grid;
             grid-template-columns: 1fr;
             gap: 12px;
-            margin-bottom: 15px;
+            margin-bottom: 16px;
         }
 
         @media (min-width: 600px) { .form-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (min-width: 900px) { .form-grid { grid-template-columns: repeat(3, 1fr); } }
 
         .form-group { display: flex; flex-direction: column; }
-        .form-group label { font-weight: 600; margin-bottom: 4px; font-size: 0.85rem; }
+        .form-group label { font-weight: 600; margin-bottom: 5px; font-size: 0.85rem; color: var(--maroon-red); }
 
         .form-group input, .form-group select {
-            padding: 11px;
-            border: 1px solid #ccc;
+            padding: 11px 12px;
+            border: 1px solid #dcdcdc;
             border-radius: 8px;
             font-size: 0.95rem;
             outline: none;
             background-color: #fff;
+            transition: all 0.2s ease;
         }
 
         .form-group input:focus, .form-group select:focus {
@@ -97,10 +100,10 @@
         @media (min-width: 600px) { .btn-group { flex-direction: row; } }
 
         button {
-            padding: 12px 18px;
+            padding: 12px 20px;
             border: none;
             border-radius: 8px;
-            font-weight: bold;
+            font-weight: 700;
             font-size: 0.95rem;
             cursor: pointer;
             display: flex;
@@ -108,7 +111,10 @@
             justify-content: center;
             gap: 6px;
             width: 100%;
+            transition: opacity 0.2s;
         }
+
+        button:hover { opacity: 0.9; }
 
         @media (min-width: 600px) { button { width: auto; } }
 
@@ -116,45 +122,82 @@
         .btn-excel { background-color: #2e7d32; color: white; }
         @media (min-width: 600px) { .btn-excel { margin-left: auto; } }
 
-        .search-container { margin-bottom: 12px; }
+        .search-container { margin-bottom: 14px; }
         .search-input {
             width: 100%;
-            padding: 12px 15px;
+            padding: 12px 16px;
             border: 2px solid var(--primary-orange);
             border-radius: 8px;
             font-size: 0.95rem;
             outline: none;
+            background-color: #ffffff;
         }
 
+        /* Clean Table with Vertical Column Lines */
         .table-responsive {
             background: white;
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+            border: 1px solid var(--border-line);
         }
 
-        table { width: 100%; border-collapse: collapse; text-align: left; }
-        th { background-color: var(--maroon-red); color: white; padding: 12px 8px; font-size: 0.8rem; }
-        td { padding: 10px 8px; border-bottom: 1px solid #eee; font-size: 0.8rem; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--maroon-red);
+            color: white;
+            padding: 12px 10px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        th:last-child { border-right: none; }
+
+        td {
+            padding: 11px 10px;
+            border-bottom: 1px solid var(--border-line);
+            border-right: 1px solid #f0f0f0;
+            font-size: 0.83rem;
+        }
+
+        td:last-child { border-right: none; }
+
+        tr:nth-child(even) { background-color: #fffdf5; }
+        tr:hover { background-color: #fff3e0; }
+
+        /* Coloured Text Highlights */
+        .highlight-name { color: var(--maroon-red); font-weight: 700; font-size: 0.88rem; }
+        .highlight-date { color: #5d4037; font-size: 0.8rem; font-weight: 500; }
+        .highlight-phone { color: #1565c0; font-weight: 600; }
+        .highlight-type { color: #e65100; font-weight: 600; }
+        .highlight-total { color: #2e7d32; font-weight: 700; }
+        .highlight-advance { color: #00838f; font-weight: 600; }
 
         @media (max-width: 850px) {
             table, thead, tbody, th, td, tr { display: block; }
             thead tr { position: absolute; top: -9999px; left: -9999px; }
             tr { border: 1px solid #ffd54f; border-radius: 10px; margin: 10px; padding: 10px; background: #fff8e1; }
-            td { border: none; position: relative; padding-left: 45%; text-align: right; padding-top: 5px; padding-bottom: 5px; }
-            td:before { position: absolute; top: 5px; left: 10px; width: 40%; text-align: left; font-weight: bold; color: var(--maroon-red); content: attr(data-label); }
+            td { border: none; border-right: none; position: relative; padding-left: 45%; text-align: right; padding-top: 6px; padding-bottom: 6px; }
+            td:before { position: absolute; top: 6px; left: 10px; width: 40%; text-align: left; font-weight: bold; color: var(--maroon-red); content: attr(data-label); }
             .action-td { padding-left: 10px !important; text-align: center !important; margin-top: 8px; border-top: 1px solid #ffe082 !important; padding-top: 8px !important; }
             .action-td:before { display: none; }
         }
 
         .action-btns { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; }
-        .btn-wa { background-color: #25d366; color: white; padding: 6px 8px; font-size: 0.75rem; }
-        .btn-receipt { background-color: #00897b; color: white; padding: 6px 8px; font-size: 0.75rem; }
-        .btn-edit { background-color: #0288d1; color: white; padding: 6px 8px; font-size: 0.75rem; }
-        .btn-delete { background-color: #d32f2f; color: white; padding: 6px 8px; font-size: 0.75rem; }
+        .btn-wa { background-color: #25d366; color: white; padding: 6px 8px; font-size: 0.75rem; border-radius: 6px; }
+        .btn-receipt { background-color: #00897b; color: white; padding: 6px 8px; font-size: 0.75rem; border-radius: 6px; }
+        .btn-edit { background-color: #0288d1; color: white; padding: 6px 8px; font-size: 0.75rem; border-radius: 6px; }
+        .btn-delete { background-color: #d32f2f; color: white; padding: 6px 8px; font-size: 0.75rem; border-radius: 6px; }
 
-        .badge-paid { background: #e8f5e9; color: #2e7d32; padding: 2px 6px; border-radius: 10px; font-weight: bold; font-size: 0.7rem; }
-        .badge-pending { background: #ffebee; color: #c62828; padding: 2px 6px; border-radius: 10px; font-weight: bold; font-size: 0.7rem; }
+        .badge-paid { background: #e8f5e9; color: #2e7d32; padding: 3px 8px; border-radius: 12px; font-weight: 700; font-size: 0.72rem; border: 1px solid #c8e6c9; }
+        .badge-pending { background: #ffebee; color: #c62828; padding: 3px 8px; border-radius: 12px; font-weight: 700; font-size: 0.72rem; border: 1px solid #ffcdd2; }
         
         #loading { text-align: center; padding: 15px; font-weight: bold; color: var(--deep-saffron); display: none; }
 
@@ -325,11 +368,11 @@
         document.getElementById('balanceAmount').value = balance >= 0 ? balance : 0;
     }
 
-    // Single Helper function to format any raw date string to "DD MMM YYYY"
+    // Helper function to format raw date string to "DD MMM YYYY"
     function cleanDateFormat(rawDateStr) {
         if (!rawDateStr) return '';
         const d = new Date(rawDateStr);
-        if (isNaN(d.getTime())) return rawDateStr; // Return as-is if invalid date
+        if (isNaN(d.getTime())) return rawDateStr;
         
         const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         let day = String(d.getDate()).padStart(2, '0');
@@ -369,26 +412,25 @@
             const originalIndex = enquiries.findIndex(e => e.id == item.id);
             const balanceVal = item.balance || 0;
             const statusBadge = balanceVal == 0 && item.total > 0 
-                ? `<span class="badge-paid">FULL PAID</span>` 
-                : (item.total > 0 ? `<span class="badge-pending">BAL: ₹${balanceVal}</span>` : `<span style="color:#757575;">Only Enquiry</span>`);
+                ? `<span class="badge-paid">FULL PAID ✅</span>` 
+                : (item.total > 0 ? `<span class="badge-pending">BAL: ₹${balanceVal}</span>` : `<span style="color:#757575; font-size:0.75rem;">Only Enquiry</span>`);
 
-            // Clean ISO Date to proper format (e.g., "27 Jul 2026")
             const formattedDate = cleanDateFormat(item.datetime);
 
             row.innerHTML = `
                 <td data-label="Sr. No."><b>${index + 1}</b></td>
-                <td data-label="Date">${formattedDate}</td>
-                <td data-label="Customer Name"><b>${item.name || ''}</b></td>
-                <td data-label="Phone">${item.phone || ''}</td>
-                <td data-label="Type / Size">${item.material || ''} (${item.size || ''})</td>
-                <td data-label="Style">${item.style || ''}</td>
-                <td data-label="Total (₹)">₹${item.total || 0}</td>
-                <td data-label="Advance (₹)">₹${item.advance || 0}</td>
+                <td data-label="Date" class="highlight-date">${formattedDate}</td>
+                <td data-label="Customer Name" class="highlight-name">${item.name || ''}</td>
+                <td data-label="Phone" class="highlight-phone">${item.phone || ''}</td>
+                <td data-label="Type / Size" class="highlight-type">${item.material || ''} (${item.size || ''})</td>
+                <td data-label="Style"><b>${item.style || ''}</b></td>
+                <td data-label="Total (₹)" class="highlight-total">₹${item.total || 0}</td>
+                <td data-label="Advance (₹)" class="highlight-advance">₹${item.advance || 0}</td>
                 <td data-label="Balance (₹)">${statusBadge}</td>
                 <td class="action-td">
                     <div class="action-btns">
                         <button class="btn-wa" onclick="sendWhatsAppMsg(${originalIndex})" title="Send Enquiry Message">💬 Msg</button>
-                        <button class="btn-receipt" onclick="generateAndCopyReceipt(${originalIndex})" title="Generate & Send Image Receipt">Receipt</button>
+                        <button class="btn-receipt" onclick="generateAndCopyReceipt(${originalIndex})" title="Generate & Send Image Receipt">🧾 Receipt</button>
                         <button class="btn-edit" onclick="editEnquiry(${originalIndex})">✏️ Edit</button>
                         <button class="btn-delete" onclick="deleteEnquiry(${originalIndex})">🗑️</button>
                     </div>
@@ -512,7 +554,7 @@
         document.getElementById('form-title').textContent = "➕ New Customer Booking & Enquiry";
     }
 
-    // 1. Send General Message for Enquiries
+    // Send General WhatsApp Message
     function sendWhatsAppMsg(index) {
         if(index === -1) return;
         const item = enquiries[index];
@@ -530,12 +572,11 @@
         window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
     }
 
-    // 2. Instant Image Receipt Copy & Open WhatsApp with Thank You Message
+    // Instant Image Receipt Copy & Open WhatsApp with Thank You Message
     async function generateAndCopyReceipt(index) {
         if(index === -1) return;
         const item = enquiries[index];
 
-        // Populate Receipt Data
         document.getElementById('r-date').innerText = cleanDateFormat(item.datetime);
         document.getElementById('r-name').innerText = item.name || '';
         document.getElementById('r-phone').innerText = item.phone || '';
@@ -550,7 +591,6 @@
         const receiptElement = document.getElementById('receipt-card');
 
         try {
-            // Render receipt div to Image
             const canvas = await html2canvas(receiptElement, { scale: 2 });
             canvas.toBlob(async (blob) => {
                 if (navigator.clipboard && window.ClipboardItem) {
@@ -563,11 +603,9 @@
                     }
                 }
 
-                // Clean Mobile Number
                 let cleanPhone = String(item.phone).replace(/\D/g, '');
                 if (cleanPhone.length === 10) cleanPhone = '91' + cleanPhone;
                 
-                // Professional Thank You Message Format
                 const thankYouMsg = `Namaste *${item.name}* ji! 🙏%0A%0A` +
                     `*Lambodar Kala Kendra* me booking karne ke liye aapka bohot bohot dhanyawad! 🌸%0A%0A` +
                     `Aapki booking receipt ki photo attach kar di gayi hai. Aapka order successfully confirm ho gaya hai.%0A%0A` +
