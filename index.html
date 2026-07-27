@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lambodar Kala Kendra - Enquiries & Bookings</title>
+    <title>Lambodar Kala Kendra - Bookings & Payment System</title>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -15,9 +15,7 @@
             --text-dark: #3e2723;
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -27,10 +25,7 @@
             padding: 12px;
         }
 
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1150px; margin: 0 auto; }
 
         header {
             text-align: center;
@@ -42,17 +37,8 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         }
 
-        header h1 {
-            margin: 0;
-            font-size: 1.6rem;
-            letter-spacing: 0.5px;
-        }
-
-        header p {
-            margin: 4px 0 0 0;
-            font-size: 0.85rem;
-            color: var(--accent-yellow);
-        }
+        header h1 { margin: 0; font-size: 1.6rem; }
+        header p { margin: 4px 0 0 0; font-size: 0.85rem; color: var(--accent-yellow); }
 
         .card {
             background: white;
@@ -71,6 +57,14 @@
             padding-bottom: 6px;
         }
 
+        .section-title {
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: var(--deep-saffron);
+            margin: 10px 0 8px 0;
+            text-transform: uppercase;
+        }
+
         .form-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -78,35 +72,17 @@
             margin-bottom: 15px;
         }
 
-        @media (min-width: 600px) {
-            .form-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
+        @media (min-width: 600px) { .form-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 900px) { .form-grid { grid-template-columns: repeat(3, 1fr); } }
 
-        @media (min-width: 900px) {
-            .form-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group label {
-            font-weight: 600;
-            margin-bottom: 4px;
-            font-size: 0.85rem;
-        }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { font-weight: 600; margin-bottom: 4px; font-size: 0.85rem; }
 
         .form-group input, .form-group select {
-            padding: 12px;
+            padding: 11px;
             border: 1px solid #ccc;
             border-radius: 8px;
             font-size: 0.95rem;
-            width: 100%;
             outline: none;
             background-color: #fff;
         }
@@ -116,17 +92,8 @@
             box-shadow: 0 0 0 3px rgba(255, 111, 0, 0.2);
         }
 
-        .btn-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        @media (min-width: 600px) {
-            .btn-group {
-                flex-direction: row;
-            }
-        }
+        .btn-group { display: flex; flex-direction: column; gap: 10px; }
+        @media (min-width: 600px) { .btn-group { flex-direction: row; } }
 
         button {
             padding: 12px 18px;
@@ -140,28 +107,15 @@
             justify-content: center;
             gap: 6px;
             width: 100%;
-            transition: background-color 0.2s ease;
         }
 
-        @media (min-width: 600px) {
-            button {
-                width: auto;
-            }
-        }
+        @media (min-width: 600px) { button { width: auto; } }
 
         .btn-add { background-color: var(--primary-orange); color: white; }
-        .btn-add:active { background-color: var(--deep-saffron); }
-
         .btn-excel { background-color: #2e7d32; color: white; }
-        @media (min-width: 600px) {
-            .btn-excel { margin-left: auto; }
-        }
+        @media (min-width: 600px) { .btn-excel { margin-left: auto; } }
 
-        /* Search Section Styling */
-        .search-container {
-            margin-bottom: 12px;
-        }
-
+        .search-container { margin-bottom: 12px; }
         .search-input {
             width: 100%;
             padding: 12px 15px;
@@ -178,107 +132,29 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { background-color: var(--maroon-red); color: white; padding: 12px 8px; font-size: 0.8rem; }
+        td { padding: 10px 8px; border-bottom: 1px solid #eee; font-size: 0.8rem; }
+
+        @media (max-width: 850px) {
+            table, thead, tbody, th, td, tr { display: block; }
+            thead tr { position: absolute; top: -9999px; left: -9999px; }
+            tr { border: 1px solid #ffd54f; border-radius: 10px; margin: 10px; padding: 10px; background: #fff8e1; }
+            td { border: none; position: relative; padding-left: 45%; text-align: right; padding-top: 5px; padding-bottom: 5px; }
+            td:before { position: absolute; top: 5px; left: 10px; width: 40%; text-align: left; font-weight: bold; color: var(--maroon-red); content: attr(data-label); }
+            .action-td { padding-left: 10px !important; text-align: center !important; margin-top: 8px; border-top: 1px solid #ffe082 !important; padding-top: 8px !important; }
+            .action-td:before { display: none; }
         }
 
-        th {
-            background-color: var(--maroon-red);
-            color: white;
-            padding: 12px 10px;
-            font-size: 0.85rem;
-        }
+        .action-btns { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; }
+        .btn-edit { background-color: #0288d1; color: white; padding: 6px 8px; font-size: 0.75rem; }
+        .btn-receipt { background-color: #25d366; color: white; padding: 6px 8px; font-size: 0.75rem; }
+        .btn-delete { background-color: #d32f2f; color: white; padding: 6px 8px; font-size: 0.75rem; }
 
-        td {
-            padding: 12px 10px;
-            border-bottom: 1px solid #eee;
-            font-size: 0.85rem;
-        }
-
-        @media (max-width: 768px) {
-            table, thead, tbody, th, td, tr {
-                display: block;
-            }
-
-            thead tr {
-                position: absolute;
-                top: -9999px;
-                left: -9999px;
-            }
-
-            tr {
-                border: 1px solid #ffd54f;
-                border-radius: 10px;
-                margin: 10px;
-                padding: 10px;
-                background: #fff8e1;
-            }
-
-            td {
-                border: none;
-                position: relative;
-                padding-left: 45%;
-                text-align: right;
-                padding-top: 6px;
-                padding-bottom: 6px;
-            }
-
-            td:before {
-                position: absolute;
-                top: 6px;
-                left: 10px;
-                width: 40%;
-                text-align: left;
-                font-weight: bold;
-                color: var(--maroon-red);
-                content: attr(data-label);
-            }
-
-            .action-td {
-                padding-left: 10px !important;
-                text-align: center !important;
-                margin-top: 10px;
-                border-top: 1px solid #ffe082 !important;
-                padding-top: 10px !important;
-            }
-
-            .action-td:before {
-                display: none;
-            }
-
-            .action-btns {
-                display: flex;
-                gap: 8px;
-            }
-
-            .action-btns button {
-                flex: 1;
-                padding: 8px 4px;
-                font-size: 0.8rem;
-            }
-        }
-
-        .action-btns {
-            display: flex;
-            gap: 6px;
-        }
-
-        .btn-edit { background-color: #0288d1; color: white; padding: 6px 10px; font-size: 0.8rem; }
-        .btn-wa { background-color: #25d366; color: white; padding: 6px 10px; font-size: 0.8rem; }
-        .btn-delete { background-color: #d32f2f; color: white; padding: 6px 10px; font-size: 0.8rem; }
-
-        .badge-eco { background: #e8f5e9; color: #2e7d32; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 0.75rem; }
-        .badge-pop { background: #ffebee; color: #c62828; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 0.75rem; }
+        .badge-paid { background: #e8f5e9; color: #2e7d32; padding: 2px 6px; border-radius: 10px; font-weight: bold; font-size: 0.7rem; }
+        .badge-pending { background: #ffebee; color: #c62828; padding: 2px 6px; border-radius: 10px; font-weight: bold; font-size: 0.7rem; }
         
-        #loading {
-            text-align: center;
-            padding: 15px;
-            font-weight: bold;
-            color: var(--deep-saffron);
-            display: none;
-        }
+        #loading { text-align: center; padding: 15px; font-weight: bold; color: var(--deep-saffron); display: none; }
     </style>
 </head>
 <body>
@@ -286,15 +162,16 @@
 <div class="container">
     <header>
         <h1>🌸 Lambodar Kala Kendra 🌸</h1>
-        <p>Live Cloud Booking System</p>
+        <p>Live Booking & Digital Payment Receipt System</p>
     </header>
 
     <div class="card">
-        <h2 id="form-title">➕ New Customer Enquiry</h2>
+        <h2 id="form-title">➕ New Customer Booking & Enquiry</h2>
         <input type="hidden" id="edit-index" value="-1">
         <input type="hidden" id="edit-datetime" value="">
         <input type="hidden" id="edit-oldname" value="">
         
+        <div class="section-title">👤 Customer & Murti Details</div>
         <div class="form-grid">
             <div class="form-group">
                 <label for="custName">Customer Name</label>
@@ -325,18 +202,36 @@
             </div>
         </div>
 
+        <div class="section-title">💳 Payment Details (UPI / Cash)</div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="totalPrice">Total Amount (₹)</label>
+                <input type="number" id="totalPrice" placeholder="Total Price" oninput="calculateBalance()">
+            </div>
+
+            <div class="form-group">
+                <label for="advancePaid">Advance Paid (₹)</label>
+                <input type="number" id="advancePaid" placeholder="Advance Amount" oninput="calculateBalance()">
+            </div>
+
+            <div class="form-group">
+                <label for="balanceAmount">Remaining Balance (₹)</label>
+                <input type="number" id="balanceAmount" placeholder="Balance Amount" readonly style="background-color: #f5f5f5;">
+            </div>
+        </div>
+
         <div class="btn-group">
-            <button class="btn-add" id="save-btn" onclick="saveEnquiry()">💾 Save Entry</button>
+            <button class="btn-add" id="save-btn" onclick="saveEnquiry()">💾 Save Booking</button>
             <button class="btn-excel" onclick="exportToExcel()">📊 Backup to Excel</button>
         </div>
     </div>
 
     <div class="search-container">
-        <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search Customer Name or Phone Number..." onkeyup="filterEnquiries()">
+        <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search Customer Name or Mobile Number..." onkeyup="filterEnquiries()">
     </div>
 
     <div class="table-responsive">
-        <div id="loading">Data Load Ho Raha Hai... 🔄</div>
+        <div id="loading">Data Sync Ho Raha Hai... 🔄</div>
         <table>
             <thead>
                 <tr>
@@ -344,9 +239,11 @@
                     <th>Date & Time</th>
                     <th>Customer Name</th>
                     <th>Phone</th>
-                    <th>Type</th>
-                    <th>Size</th>
+                    <th>Type / Size</th>
                     <th>Style</th>
+                    <th>Total (₹)</th>
+                    <th>Advance (₹)</th>
+                    <th>Balance (₹)</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -368,22 +265,23 @@
 
     let enquiries = [];
 
+    function calculateBalance() {
+        const total = parseFloat(document.getElementById('totalPrice').value) || 0;
+        const advance = parseFloat(document.getElementById('advancePaid').value) || 0;
+        const balance = total - advance;
+        document.getElementById('balanceAmount').value = balance >= 0 ? balance : 0;
+    }
+
     async function loadData() {
         document.getElementById('loading').style.display = 'block';
         try {
-            const res = await fetch(SCRIPT_URL);
+            const res = await fetch(SCRIPT_URL + "?t=" + new Date().getTime());
             enquiries = await res.json();
             renderTable(enquiries);
         } catch(e) {
             console.error("Error loading data:", e);
-            renderOfflineData();
         }
         document.getElementById('loading').style.display = 'none';
-    }
-
-    function renderOfflineData() {
-        enquiries = JSON.parse(localStorage.getItem('lambodar_enquiries')) || [];
-        renderTable(enquiries);
     }
 
     function renderTable(dataToRender) {
@@ -391,28 +289,31 @@
         tbody.innerHTML = '';
 
         if (!dataToRender || dataToRender.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 20px;">Koi enquiry recorded nahi hai.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding: 20px;">Koi booking record nahi hai.</td></tr>`;
             return;
         }
 
         dataToRender.forEach((item, index) => {
-            const badgeClass = (item.material && item.material.includes('Eco')) ? 'badge-eco' : 'badge-pop';
             const row = document.createElement('tr');
-            
-            // Find actual index in main enquiries array for action buttons
             const originalIndex = enquiries.findIndex(e => e.datetime === item.datetime && e.name === item.name);
-            
+            const balanceVal = item.balance || 0;
+            const statusBadge = balanceVal == 0 && item.total > 0 
+                ? `<span class="badge-paid">FULL PAID</span>` 
+                : `<span class="badge-pending">BAL: ₹${balanceVal}</span>`;
+
             row.innerHTML = `
                 <td data-label="Sr. No."><b>${index + 1}</b></td>
                 <td data-label="Date & Time">${item.datetime || ''}</td>
-                <td data-label="Customer Name">${item.name || ''}</td>
+                <td data-label="Customer Name"><b>${item.name || ''}</b></td>
                 <td data-label="Phone">${item.phone || ''}</td>
-                <td data-label="Type"><span class="${badgeClass}">${item.material || ''}</span></td>
-                <td data-label="Size">${item.size || ''}</td>
+                <td data-label="Type / Size">${item.material || ''} (${item.size || ''})</td>
                 <td data-label="Style">${item.style || ''}</td>
+                <td data-label="Total (₹)">₹${item.total || 0}</td>
+                <td data-label="Advance (₹)">₹${item.advance || 0}</td>
+                <td data-label="Balance (₹)">${statusBadge}</td>
                 <td class="action-td">
                     <div class="action-btns">
-                        <button class="btn-wa" onclick="sendWhatsApp(${originalIndex})">💬 WhatsApp</button>
+                        <button class="btn-receipt" onclick="sendWhatsAppReceipt(${originalIndex})">🧾 Receipt</button>
                         <button class="btn-edit" onclick="editEnquiry(${originalIndex})">✏️ Edit</button>
                         <button class="btn-delete" onclick="deleteEnquiry(${originalIndex})">🗑️</button>
                     </div>
@@ -444,10 +345,13 @@
         const material = document.getElementById('material').value;
         const size = document.getElementById('size').value;
         const style = document.getElementById('style').value.trim();
+        const total = parseFloat(document.getElementById('totalPrice').value) || 0;
+        const advance = parseFloat(document.getElementById('advancePaid').value) || 0;
+        const balance = parseFloat(document.getElementById('balanceAmount').value) || 0;
         const editIndex = parseInt(document.getElementById('edit-index').value);
 
         if (!name || !phone || !style) {
-            alert('Kripya saari details bharein!');
+            alert('Kripya Name, Phone aur Style zaroor bharein!');
             return;
         }
 
@@ -458,11 +362,11 @@
 
         let payload = {};
         if (editIndex === -1) {
-            payload = { action: "add", datetime, name, phone, material, size, style };
+            payload = { action: "add", datetime, name, phone, material, size, style, total, advance, balance };
         } else {
             const oldDatetime = document.getElementById('edit-datetime').value;
             const oldName = document.getElementById('edit-oldname').value;
-            payload = { action: "update", oldDatetime, oldName, name, phone, material, size, style };
+            payload = { action: "update", oldDatetime, oldName, name, phone, material, size, style, total, advance, balance };
         }
 
         try {
@@ -477,7 +381,7 @@
         }
 
         resetForm();
-        setTimeout(loadData, 1000); // 1 sec delay for Apps Script processing
+        setTimeout(loadData, 1200);
     }
 
     function editEnquiry(index) {
@@ -488,34 +392,33 @@
         document.getElementById('material').value = item.material;
         document.getElementById('size').value = item.size;
         document.getElementById('style').value = item.style;
+        document.getElementById('totalPrice').value = item.total || 0;
+        document.getElementById('advancePaid').value = item.advance || 0;
+        document.getElementById('balanceAmount').value = item.balance || 0;
         
         document.getElementById('edit-index').value = index;
         document.getElementById('edit-datetime').value = item.datetime;
         document.getElementById('edit-oldname').value = item.name;
         
-        document.getElementById('save-btn').textContent = "🔄 Update Entry";
-        document.getElementById('form-title').textContent = "✏️ Edit Customer Enquiry";
+        document.getElementById('save-btn').textContent = "🔄 Update Booking";
+        document.getElementById('form-title').textContent = "✏️ Edit Booking Details";
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     async function deleteEnquiry(index) {
         if(index === -1) return;
-        if (confirm("Kya aap ye enquiry delete karna chahte hain?")) {
+        if (confirm("Kya aap ye booking record delete karna chahte hain?")) {
             const item = enquiries[index];
             document.getElementById('loading').style.display = 'block';
             
             try {
-                await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: "delete", datetime: item.datetime, name: item.name })
-                });
+                const deleteUrl = `${SCRIPT_URL}?action=delete&datetime=${encodeURIComponent(item.datetime)}&name=${encodeURIComponent(item.name)}`;
+                await fetch(deleteUrl);
             } catch(e) {
                 console.error("Delete error:", e);
             }
 
-            setTimeout(loadData, 1000);
+            setTimeout(loadData, 1200);
         }
     }
 
@@ -523,26 +426,42 @@
         document.getElementById('custName').value = '';
         document.getElementById('phone').value = '';
         document.getElementById('style').value = '';
+        document.getElementById('totalPrice').value = '';
+        document.getElementById('advancePaid').value = '';
+        document.getElementById('balanceAmount').value = '';
         document.getElementById('material').selectedIndex = 0;
         document.getElementById('size').selectedIndex = 0;
         document.getElementById('edit-index').value = "-1";
-        document.getElementById('save-btn').textContent = "💾 Save Entry";
-        document.getElementById('form-title').textContent = "➕ New Customer Enquiry";
+        document.getElementById('save-btn').textContent = "💾 Save Booking";
+        document.getElementById('form-title').textContent = "➕ New Customer Booking & Enquiry";
     }
 
-    function sendWhatsApp(index) {
+    function sendWhatsAppReceipt(index) {
         if(index === -1) return;
         const item = enquiries[index];
         let cleanPhone = String(item.phone).replace(/\D/g, '');
         if (cleanPhone.length === 10) cleanPhone = '91' + cleanPhone;
 
-        const message = `Namaste ${item.name} ji! 🙏%0A%0A` +
-            `*Lambodar Kala Kendra* me aapka swagat hai! 🌸%0A%0A` +
-            `Aapki Ganpati Bappa Murti enquiry details:%0A` +
-            `▫️ *Material:* ${item.material}%0A` +
-            `▫️ *Size:* ${item.size}%0A` +
-            `▫️ *Style:* ${item.style}%0A%0A` +
-            `Booking finalize karne ke liye is message ka reply karein. Ganpati Bappa Morya! 🚩`;
+        const statusText = item.balance == 0 && item.total > 0 ? "FULL PAID ✅" : "ADVANCE PAID 🟡";
+
+        const message = `🌸 *LAMBODAR KALA KENDRA* 🌸%0A` +
+            `📍 *Booking Receipt & Confirmation*%0A` +
+            `----------------------------------------%0A` +
+            `👤 *Customer Name:* ${item.name}%0A` +
+            `📱 *Phone:* ${item.phone}%0A` +
+            `📅 *Date:* ${item.datetime}%0A%0A` +
+            `🛕 *MURTI DETAILS:*%0A` +
+            `• *Material:* ${item.material}%0A` +
+            `• *Size:* ${item.size}%0A` +
+            `• *Style:* ${item.style}%0A%0A` +
+            `💳 *PAYMENT SUMMARY:*%0A` +
+            `• *Total Price:* ₹${item.total}%0A` +
+            `• *Advance Paid:* ₹${item.advance}%0A` +
+            `• *Remaining Balance:* ₹${item.balance}%0A` +
+            `• *Status:* ${statusText}%0A` +
+            `----------------------------------------%0A` +
+            `Aapki booking successfully ho gayi hai!%0A` +
+            `Ganpati Bappa Morya! 🚩🌸`;
 
         window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
     }
@@ -560,13 +479,16 @@
             "Phone Number": item.phone,
             "Material": item.material,
             "Size": item.size,
-            "Murti Style": item.style
+            "Murti Style": item.style,
+            "Total Price": item.total,
+            "Advance Paid": item.advance,
+            "Balance Amount": item.balance
         }));
 
         const worksheet = XLSX.utils.json_to_sheet(excelData);
         const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Enquiries");
-        XLSX.writeFile(workbook, "Lambodar_Kala_Kendra_Enquiries.xlsx");
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Bookings");
+        XLSX.writeFile(workbook, "Lambodar_Kala_Kendra_Bookings.xlsx");
     }
 
     loadData();
