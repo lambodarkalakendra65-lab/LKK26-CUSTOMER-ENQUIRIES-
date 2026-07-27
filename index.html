@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lambodar Kala Kendra - Bookings & Payment System</title>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <style>
         :root {
             --primary-orange: #ff6f00;
@@ -156,6 +157,36 @@
         .badge-pending { background: #ffebee; color: #c62828; padding: 2px 6px; border-radius: 10px; font-weight: bold; font-size: 0.7rem; }
         
         #loading { text-align: center; padding: 15px; font-weight: bold; color: var(--deep-saffron); display: none; }
+
+        /* Hidden Receipt Template for Auto Rendering */
+        #receipt-card {
+            position: absolute;
+            left: -9999px;
+            top: -9999px;
+            width: 400px;
+            background: #ffffff;
+            border: 3px solid #e65100;
+            border-radius: 12px;
+            padding: 20px;
+            font-family: sans-serif;
+            color: #3e2723;
+        }
+
+        #receipt-card .header {
+            text-align: center;
+            border-bottom: 2px dashed #ff6f00;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        #receipt-card .header h2 { margin: 0; color: #880e4f; font-size: 1.3rem; }
+        #receipt-card .header p { margin: 3px 0 0 0; font-size: 0.8rem; color: #e65100; font-weight: bold; }
+
+        #receipt-card .row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85rem; }
+        #receipt-card .row strong { color: #880e4f; }
+        
+        #receipt-card .divider { border-bottom: 1px solid #ddd; margin: 10px 0; }
+        #receipt-card .footer { text-align: center; margin-top: 15px; font-size: 0.8rem; font-weight: bold; color: #ff6f00; }
     </style>
 </head>
 <body>
@@ -251,6 +282,29 @@
     </div>
 </div>
 
+<div id="receipt-card">
+    <div class="header">
+        <h2>🌸 LAMBODAR KALA KENDRA 🌸</h2>
+        <p>OFFICIAL BOOKING RECEIPT</p>
+    </div>
+    <div class="row"><span>Date & Time:</span><strong id="r-date"></strong></div>
+    <div class="row"><span>Customer Name:</span><strong id="r-name"></strong></div>
+    <div class="row"><span>Mobile No:</span><strong id="r-phone"></strong></div>
+    <div class="divider"></div>
+    <div class="row"><span>Murti Type:</span><strong id="r-material"></strong></div>
+    <div class="row"><span>Size:</span><strong id="r-size"></strong></div>
+    <div class="row"><span>Style:</span><strong id="r-style"></strong></div>
+    <div class="divider"></div>
+    <div class="row"><span>Total Amount:</span><strong id="r-total"></strong></div>
+    <div class="row"><span>Advance Paid:</span><strong id="r-advance"></strong></div>
+    <div class="row"><span>Balance Remaining:</span><strong id="r-balance"></strong></div>
+    <div class="row"><span>Payment Status:</span><strong id="r-status"></strong></div>
+    <div class="footer">
+        Ganpati Bappa Morya! 🚩<br>
+        Thank you for booking with us!
+    </div>
+</div>
+
 <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyCI1k4bvmPUhkWh1-HOHsoL8LOaV8elus3NgWLF8tqBLd5fOeB21zXFT3r7v2p9NdI/exec";
 
@@ -320,7 +374,7 @@
                 <td class="action-td">
                     <div class="action-btns">
                         <button class="btn-wa" onclick="sendWhatsAppMsg(${originalIndex})" title="Send Enquiry Message">💬 Msg</button>
-                        <button class="btn-receipt" onclick="sendWhatsAppReceipt(${originalIndex})" title="Send Payment Receipt">🧾 Receipt</button>
+                        <button class="btn-receipt" onclick="generateAndCopyReceipt(${originalIndex})" title="Generate & Send Image Receipt">🧾 Receipt</button>
                         <button class="btn-edit" onclick="editEnquiry(${originalIndex})">✏️ Edit</button>
                         <button class="btn-delete" onclick="deleteEnquiry(${originalIndex})">🗑️</button>
                     </div>
@@ -444,7 +498,7 @@
         document.getElementById('form-title').textContent = "➕ New Customer Booking & Enquiry";
     }
 
-    // 1. General Message for Enquiries
+    // 1. Send General Message for Enquiries
     function sendWhatsAppMsg(index) {
         if(index === -1) return;
         const item = enquiries[index];
@@ -462,35 +516,54 @@
         window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
     }
 
-    // 2. Receipt Message for Bookings
-    function sendWhatsAppReceipt(index) {
+    // 2. Instant Image Receipt Copy & Open WhatsApp with Thank You Message
+    async function generateAndCopyReceipt(index) {
         if(index === -1) return;
         const item = enquiries[index];
-        let cleanPhone = String(item.phone).replace(/\D/g, '');
-        if (cleanPhone.length === 10) cleanPhone = '91' + cleanPhone;
 
-        const statusText = item.balance == 0 && item.total > 0 ? "FULL PAID ✅" : "ADVANCE PAID 🟡";
+        // Populate Receipt Data
+        document.getElementById('r-date').innerText = item.datetime || '';
+        document.getElementById('r-name').innerText = item.name || '';
+        document.getElementById('r-phone').innerText = item.phone || '';
+        document.getElementById('r-material').innerText = item.material || '';
+        document.getElementById('r-size').innerText = item.size || '';
+        document.getElementById('r-style').innerText = item.style || '';
+        document.getElementById('r-total').innerText = '₹' + (item.total || 0);
+        document.getElementById('r-advance').innerText = '₹' + (item.advance || 0);
+        document.getElementById('r-balance').innerText = '₹' + (item.balance || 0);
+        document.getElementById('r-status').innerText = item.balance == 0 && item.total > 0 ? "FULL PAID ✅" : "ADVANCE PAID 🟡";
 
-        const message = `🌸 *LAMBODAR KALA KENDRA* 🌸%0A` +
-            `📍 *Booking Receipt & Confirmation*%0A` +
-            `----------------------------------------%0A` +
-            `👤 *Customer Name:* ${item.name}%0A` +
-            `📱 *Phone:* ${item.phone}%0A` +
-            `📅 *Date:* ${item.datetime}%0A%0A` +
-            `🛕 *MURTI DETAILS:*%0A` +
-            `• *Material:* ${item.material}%0A` +
-            `• *Size:* ${item.size}%0A` +
-            `• *Style:* ${item.style}%0A%0A` +
-            `💳 *PAYMENT SUMMARY:*%0A` +
-            `• *Total Price:* ₹${item.total}%0A` +
-            `• *Advance Paid:* ₹${item.advance}%0A` +
-            `• *Remaining Balance:* ₹${item.balance}%0A` +
-            `• *Status:* ${statusText}%0A` +
-            `----------------------------------------%0A` +
-            `Aapki booking successfully ho gayi hai!%0A` +
-            `Ganpati Bappa Morya! 🚩🌸`;
+        const receiptElement = document.getElementById('receipt-card');
 
-        window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
+        try {
+            // Render receipt div to Image
+            const canvas = await html2canvas(receiptElement, { scale: 2 });
+            canvas.toBlob(async (blob) => {
+                if (navigator.clipboard && window.ClipboardItem) {
+                    try {
+                        const itemBlob = new ClipboardItem({ 'image/png': blob });
+                        await navigator.clipboard.write([itemBlob]);
+                        alert("✅ Digital Receipt Image Copy Ho Gayi Hai!\n\nWhatsApp Khulte Hi Text Ke Sath Image 'Ctrl + V' (Paste) Kar Dein!");
+                    } catch (err) {
+                        console.error("Clipboard copy failed: ", err);
+                    }
+                }
+
+                // Clean Mobile Number
+                let cleanPhone = String(item.phone).replace(/\D/g, '');
+                if (cleanPhone.length === 10) cleanPhone = '91' + cleanPhone;
+                
+                // Professional Thank You Message Format
+                const thankYouMsg = `Namaste *${item.name}* ji! 🙏%0A%0A` +
+                    `*Lambodar Kala Kendra* me booking karne ke liye aapka bohot bohot dhanyawad! 🌸%0A%0A` +
+                    `Aapki booking receipt ki photo attach kar di gayi hai. Aapka order successfully confirm ho gaya hai.%0A%0A` +
+                    `*Ganpati Bappa Morya! 🚩*`;
+
+                window.open(`https://wa.me/${cleanPhone}?text=${thankYouMsg}`, '_blank');
+            });
+        } catch(e) {
+            console.error("Error generating receipt image:", e);
+        }
     }
 
     function exportToExcel() {
