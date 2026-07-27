@@ -147,8 +147,9 @@
         }
 
         .action-btns { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; }
+        .btn-wa { background-color: #25d366; color: white; padding: 6px 8px; font-size: 0.75rem; }
+        .btn-receipt { background-color: #00897b; color: white; padding: 6px 8px; font-size: 0.75rem; }
         .btn-edit { background-color: #0288d1; color: white; padding: 6px 8px; font-size: 0.75rem; }
-        .btn-receipt { background-color: #25d366; color: white; padding: 6px 8px; font-size: 0.75rem; }
         .btn-delete { background-color: #d32f2f; color: white; padding: 6px 8px; font-size: 0.75rem; }
 
         .badge-paid { background: #e8f5e9; color: #2e7d32; padding: 2px 6px; border-radius: 10px; font-weight: bold; font-size: 0.7rem; }
@@ -200,7 +201,7 @@
             </div>
         </div>
 
-        <div class="section-title">💳 Payment Details (UPI / Cash)</div>
+        <div class="section-title">💳 Payment Details (Optional for Enquiry)</div>
         <div class="form-grid">
             <div class="form-group">
                 <label for="totalPrice">Total Amount (₹)</label>
@@ -219,7 +220,7 @@
         </div>
 
         <div class="btn-group">
-            <button class="btn-add" id="save-btn" onclick="saveEnquiry()">💾 Save Booking</button>
+            <button class="btn-add" id="save-btn" onclick="saveEnquiry()">💾 Save Entry</button>
             <button class="btn-excel" onclick="exportToExcel()">📊 Backup to Excel</button>
         </div>
     </div>
@@ -270,7 +271,6 @@
         document.getElementById('balanceAmount').value = balance >= 0 ? balance : 0;
     }
 
-    // Clean Date & Time Formatter
     function getFormattedDateTime() {
         const now = new Date();
         const optionsDate = { day: '2-digit', month: 'short', year: 'numeric' };
@@ -295,7 +295,7 @@
         tbody.innerHTML = '';
 
         if (!dataToRender || dataToRender.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding: 20px;">Koi booking record nahi hai.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding: 20px;">Koi record nahi hai.</td></tr>`;
             return;
         }
 
@@ -305,7 +305,7 @@
             const balanceVal = item.balance || 0;
             const statusBadge = balanceVal == 0 && item.total > 0 
                 ? `<span class="badge-paid">FULL PAID</span>` 
-                : `<span class="badge-pending">BAL: ₹${balanceVal}</span>`;
+                : (item.total > 0 ? `<span class="badge-pending">BAL: ₹${balanceVal}</span>` : `<span style="color:#757575;">Only Enquiry</span>`);
 
             row.innerHTML = `
                 <td data-label="Sr. No."><b>${index + 1}</b></td>
@@ -319,7 +319,8 @@
                 <td data-label="Balance (₹)">${statusBadge}</td>
                 <td class="action-td">
                     <div class="action-btns">
-                        <button class="btn-receipt" onclick="sendWhatsAppReceipt(${originalIndex})">🧾 Receipt</button>
+                        <button class="btn-wa" onclick="sendWhatsAppMsg(${originalIndex})" title="Send Enquiry Message">💬 Msg</button>
+                        <button class="btn-receipt" onclick="sendWhatsAppReceipt(${originalIndex})" title="Send Payment Receipt">🧾 Receipt</button>
                         <button class="btn-edit" onclick="editEnquiry(${originalIndex})">✏️ Edit</button>
                         <button class="btn-delete" onclick="deleteEnquiry(${originalIndex})">🗑️</button>
                     </div>
@@ -407,19 +408,18 @@
         
         document.getElementById('edit-id').value = item.id;
         
-        document.getElementById('save-btn').textContent = "🔄 Update Booking";
-        document.getElementById('form-title').textContent = "✏️ Edit Booking Details";
+        document.getElementById('save-btn').textContent = "🔄 Update Record";
+        document.getElementById('form-title').textContent = "✏️ Edit Details";
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     async function deleteEnquiry(index) {
         if(index === -1) return;
-        if (confirm("Kya aap ye booking record delete karna chahte hain?")) {
+        if (confirm("Kya aap ye record delete karna chahte hain?")) {
             const item = enquiries[index];
             document.getElementById('loading').style.display = 'block';
             
             try {
-                // Delete using Unique ID
                 const deleteUrl = `${SCRIPT_URL}?action=delete&id=${encodeURIComponent(item.id)}`;
                 await fetch(deleteUrl);
             } catch(e) {
@@ -440,10 +440,29 @@
         document.getElementById('material').selectedIndex = 0;
         document.getElementById('size').selectedIndex = 0;
         document.getElementById('edit-id').value = "";
-        document.getElementById('save-btn').textContent = "💾 Save Booking";
+        document.getElementById('save-btn').textContent = "💾 Save Entry";
         document.getElementById('form-title').textContent = "➕ New Customer Booking & Enquiry";
     }
 
+    // 1. General Message for Enquiries
+    function sendWhatsAppMsg(index) {
+        if(index === -1) return;
+        const item = enquiries[index];
+        let cleanPhone = String(item.phone).replace(/\D/g, '');
+        if (cleanPhone.length === 10) cleanPhone = '91' + cleanPhone;
+
+        const message = `Namaste ${item.name} ji! 🙏%0A%0A` +
+            `*Lambodar Kala Kendra* me aapka swagat hai! 🌸%0A%0A` +
+            `Aapki Ganpati Bappa Murti enquiry details:%0A` +
+            `▫️ *Material:* ${item.material}%0A` +
+            `▫️ *Size:* ${item.size}%0A` +
+            `▫️ *Style:* ${item.style}%0A%0A` +
+            `Booking finalize karne ya kisi bhi jankari ke liye is message ka reply karein. Ganpati Bappa Morya! 🚩`;
+
+        window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
+    }
+
+    // 2. Receipt Message for Bookings
     function sendWhatsAppReceipt(index) {
         if(index === -1) return;
         const item = enquiries[index];
