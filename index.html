@@ -38,8 +38,8 @@
             color: white;
             padding: 15px 10px;
             border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
             margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         }
 
         header h1 {
@@ -106,8 +106,8 @@
             border: 1px solid #ccc;
             border-radius: 8px;
             font-size: 0.95rem;
-            outline: none;
             width: 100%;
+            outline: none;
             background-color: #fff;
         }
 
@@ -135,12 +135,12 @@
             font-weight: bold;
             font-size: 0.95rem;
             cursor: pointer;
-            transition: background-color 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
             width: 100%;
+            transition: background-color 0.2s ease;
         }
 
         @media (min-width: 600px) {
@@ -157,12 +157,11 @@
             .btn-excel { margin-left: auto; }
         }
 
-        /* Responsive Table Design */
         .table-responsive {
             background: white;
             border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
 
         table {
@@ -184,7 +183,6 @@
             font-size: 0.85rem;
         }
 
-        /* Mobile Responsive Card-View for Table */
         @media (max-width: 768px) {
             table, thead, tbody, th, td, tr {
                 display: block;
@@ -202,7 +200,6 @@
                 margin: 10px;
                 padding: 10px;
                 background: #fff8e1;
-                box-shadow: 0 1px 4px rgba(0,0,0,0.05);
             }
 
             td {
@@ -210,7 +207,6 @@
                 position: relative;
                 padding-left: 45%;
                 text-align: right;
-                font-size: 0.9rem;
                 padding-top: 6px;
                 padding-bottom: 6px;
             }
@@ -220,8 +216,6 @@
                 top: 6px;
                 left: 10px;
                 width: 40%;
-                padding-right: 10px;
-                white-space: nowrap;
                 text-align: left;
                 font-weight: bold;
                 color: var(--maroon-red);
@@ -243,7 +237,6 @@
             .action-btns {
                 display: flex;
                 gap: 8px;
-                justify-content: space-between;
             }
 
             .action-btns button {
@@ -264,6 +257,14 @@
 
         .badge-eco { background: #e8f5e9; color: #2e7d32; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 0.75rem; }
         .badge-pop { background: #ffebee; color: #c62828; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 0.75rem; }
+        
+        #loading {
+            text-align: center;
+            padding: 15px;
+            font-weight: bold;
+            color: var(--deep-saffron);
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -271,12 +272,14 @@
 <div class="container">
     <header>
         <h1>🌸 Lambodar Kala Kendra 🌸</h1>
-        <p>Ganpati Murti Enquiry & Booking Details</p>
+        <p>Live Cloud Booking System</p>
     </header>
 
     <div class="card">
         <h2 id="form-title">➕ New Customer Enquiry</h2>
         <input type="hidden" id="edit-index" value="-1">
+        <input type="hidden" id="edit-datetime" value="">
+        <input type="hidden" id="edit-oldname" value="">
         
         <div class="form-grid">
             <div class="form-group">
@@ -299,8 +302,7 @@
 
             <div class="form-group">
                 <label for="size">Size (in Feet)</label>
-                <select id="size">
-                    </select>
+                <select id="size"></select>
             </div>
 
             <div class="form-group">
@@ -316,6 +318,7 @@
     </div>
 
     <div class="table-responsive">
+        <div id="loading">Data Load Ho Raha Hai... 🔄</div>
         <table>
             <thead>
                 <tr>
@@ -329,14 +332,15 @@
                     <th>Actions</th>
                 </tr>
             </thead>
-            <tbody id="enquiry-list">
-                </tbody>
+            <tbody id="enquiry-list"></tbody>
         </table>
     </div>
 </div>
 
 <script>
-    // Populate Size dropdown from 1.0ft to 10.0ft with 0.5ft increments
+    // AAPKA GOOGLE SCRIPT WEB APP URL ADD KAR DIYA GAYA HAI
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzrpkq2e2OpQ7_lPyTeXbcGnhE-nrm5FCu2ciCX71_ef5uzxlrSLI_Ay6ZBhld4iULB/exec";
+
     const sizeSelect = document.getElementById('size');
     for (let i = 1.0; i <= 10.0; i += 0.5) {
         let option = document.createElement('option');
@@ -345,30 +349,47 @@
         sizeSelect.appendChild(option);
     }
 
-    // LocalStorage Data Management
-    let enquiries = JSON.parse(localStorage.getItem('lambodar_enquiries')) || [];
+    let enquiries = [];
+
+    async function loadData() {
+        document.getElementById('loading').style.display = 'block';
+        try {
+            const res = await fetch(SCRIPT_URL);
+            enquiries = await res.json();
+            renderTable();
+        } catch(e) {
+            console.error("Error loading data:", e);
+            renderOfflineData();
+        }
+        document.getElementById('loading').style.display = 'none';
+    }
+
+    function renderOfflineData() {
+        enquiries = JSON.parse(localStorage.getItem('lambodar_enquiries')) || [];
+        renderTable();
+    }
 
     function renderTable() {
         const tbody = document.getElementById('enquiry-list');
         tbody.innerHTML = '';
 
-        if (enquiries.length === 0) {
+        if (!enquiries || enquiries.length === 0) {
             tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 20px;">Koi enquiry recorded nahi hai.</td></tr>`;
             return;
         }
 
         enquiries.forEach((item, index) => {
-            const badgeClass = item.material.includes('Eco') ? 'badge-eco' : 'badge-pop';
+            const badgeClass = (item.material && item.material.includes('Eco')) ? 'badge-eco' : 'badge-pop';
             const row = document.createElement('tr');
             
             row.innerHTML = `
                 <td data-label="Sr. No."><b>${index + 1}</b></td>
-                <td data-label="Date & Time">${item.datetime}</td>
-                <td data-label="Customer Name">${item.name}</td>
-                <td data-label="Phone">${item.phone}</td>
-                <td data-label="Type"><span class="${badgeClass}">${item.material}</span></td>
-                <td data-label="Size">${item.size}</td>
-                <td data-label="Style">${item.style}</td>
+                <td data-label="Date & Time">${item.datetime || ''}</td>
+                <td data-label="Customer Name">${item.name || ''}</td>
+                <td data-label="Phone">${item.phone || ''}</td>
+                <td data-label="Type"><span class="${badgeClass}">${item.material || ''}</span></td>
+                <td data-label="Size">${item.size || ''}</td>
+                <td data-label="Style">${item.style || ''}</td>
                 <td class="action-td">
                     <div class="action-btns">
                         <button class="btn-wa" onclick="sendWhatsApp(${index})">💬 WhatsApp</button>
@@ -381,7 +402,7 @@
         });
     }
 
-    function saveEnquiry() {
+    async function saveEnquiry() {
         const name = document.getElementById('custName').value.trim();
         const phone = document.getElementById('phone').value.trim();
         const material = document.getElementById('material').value;
@@ -397,25 +418,28 @@
         const now = new Date();
         const datetime = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
+        document.getElementById('loading').style.display = 'block';
+
+        let payload = {};
         if (editIndex === -1) {
-            enquiries.push({ datetime, name, phone, material, size, style });
+            payload = { action: "add", datetime, name, phone, material, size, style };
         } else {
-            enquiries[editIndex] = { 
-                datetime: enquiries[editIndex].datetime, 
-                name, 
-                phone, 
-                material, 
-                size, 
-                style 
-            };
-            document.getElementById('edit-index').value = "-1";
-            document.getElementById('save-btn').textContent = "💾 Save Entry";
-            document.getElementById('form-title').textContent = "➕ New Customer Enquiry";
+            const oldDatetime = document.getElementById('edit-datetime').value;
+            const oldName = document.getElementById('edit-oldname').value;
+            payload = { action: "update", oldDatetime, oldName, name, phone, material, size, style };
         }
 
-        localStorage.setItem('lambodar_enquiries', JSON.stringify(enquiries));
+        try {
+            await fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            });
+        } catch(e) {
+            alert("Connection error! Kripya dobara try karein.");
+        }
+
         resetForm();
-        renderTable();
+        await loadData();
     }
 
     function editEnquiry(index) {
@@ -427,17 +451,23 @@
         document.getElementById('style').value = item.style;
         
         document.getElementById('edit-index').value = index;
+        document.getElementById('edit-datetime').value = item.datetime;
+        document.getElementById('edit-oldname').value = item.name;
+        
         document.getElementById('save-btn').textContent = "🔄 Update Entry";
         document.getElementById('form-title').textContent = "✏️ Edit Customer Enquiry";
-        
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function deleteEnquiry(index) {
+    async function deleteEnquiry(index) {
         if (confirm("Kya aap ye enquiry delete karna chahte hain?")) {
-            enquiries.splice(index, 1);
-            localStorage.setItem('lambodar_enquiries', JSON.stringify(enquiries));
-            renderTable();
+            const item = enquiries[index];
+            document.getElementById('loading').style.display = 'block';
+            await fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: "delete", datetime: item.datetime, name: item.name })
+            });
+            await loadData();
         }
     }
 
@@ -447,18 +477,19 @@
         document.getElementById('style').value = '';
         document.getElementById('material').selectedIndex = 0;
         document.getElementById('size').selectedIndex = 0;
+        document.getElementById('edit-index').value = "-1";
+        document.getElementById('save-btn').textContent = "💾 Save Entry";
+        document.getElementById('form-title').textContent = "➕ New Customer Enquiry";
     }
 
     function sendWhatsApp(index) {
         const item = enquiries[index];
-        let cleanPhone = item.phone.replace(/\D/g, '');
-        if (cleanPhone.length === 10) {
-            cleanPhone = '91' + cleanPhone;
-        }
+        let cleanPhone = String(item.phone).replace(/\D/g, '');
+        if (cleanPhone.length === 10) cleanPhone = '91' + cleanPhone;
 
         const message = `Namaste ${item.name} ji! 🙏%0A%0A` +
             `*Lambodar Kala Kendra* me aapka swagat hai! 🌸%0A%0A` +
-            `Aapki Ganpati Bappa Murti enquiry ki details:%0A` +
+            `Aapki Ganpati Bappa Murti enquiry details:%0A` +
             `▫️ *Material:* ${item.material}%0A` +
             `▫️ *Size:* ${item.size}%0A` +
             `▫️ *Style:* ${item.style}%0A%0A` +
@@ -468,7 +499,7 @@
     }
 
     function exportToExcel() {
-        if (enquiries.length === 0) {
+        if (!enquiries || enquiries.length === 0) {
             alert("Export karne ke liye koi data nahi hai!");
             return;
         }
@@ -486,11 +517,10 @@
         const worksheet = XLSX.utils.json_to_sheet(excelData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Enquiries");
-
         XLSX.writeFile(workbook, "Lambodar_Kala_Kendra_Enquiries.xlsx");
     }
 
-    renderTable();
+    loadData();
 </script>
 </body>
 </html>
