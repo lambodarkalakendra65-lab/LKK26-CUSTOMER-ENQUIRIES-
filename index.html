@@ -167,9 +167,7 @@
 
     <div class="card">
         <h2 id="form-title">➕ New Customer Booking & Enquiry</h2>
-        <input type="hidden" id="edit-index" value="-1">
-        <input type="hidden" id="edit-datetime" value="">
-        <input type="hidden" id="edit-oldname" value="">
+        <input type="hidden" id="edit-id" value="">
         
         <div class="section-title">👤 Customer & Murti Details</div>
         <div class="form-grid">
@@ -231,7 +229,7 @@
     </div>
 
     <div class="table-responsive">
-        <div id="loading">Data Sync Ho Raha Hai... 🔄</div>
+        <div id="loading">Data Processing... 🔄</div>
         <table>
             <thead>
                 <tr>
@@ -272,6 +270,14 @@
         document.getElementById('balanceAmount').value = balance >= 0 ? balance : 0;
     }
 
+    // Clean Date & Time Formatter
+    function getFormattedDateTime() {
+        const now = new Date();
+        const optionsDate = { day: '2-digit', month: 'short', year: 'numeric' };
+        const optionsTime = { hour: '2-digit', minute: '2-digit', hour12: true };
+        return `${now.toLocaleDateString('en-GB', optionsDate)}, ${now.toLocaleTimeString('en-US', optionsTime)}`;
+    }
+
     async function loadData() {
         document.getElementById('loading').style.display = 'block';
         try {
@@ -295,7 +301,7 @@
 
         dataToRender.forEach((item, index) => {
             const row = document.createElement('tr');
-            const originalIndex = enquiries.findIndex(e => e.datetime === item.datetime && e.name === item.name);
+            const originalIndex = enquiries.findIndex(e => e.id == item.id);
             const balanceVal = item.balance || 0;
             const statusBadge = balanceVal == 0 && item.total > 0 
                 ? `<span class="badge-paid">FULL PAID</span>` 
@@ -348,25 +354,28 @@
         const total = parseFloat(document.getElementById('totalPrice').value) || 0;
         const advance = parseFloat(document.getElementById('advancePaid').value) || 0;
         const balance = parseFloat(document.getElementById('balanceAmount').value) || 0;
-        const editIndex = parseInt(document.getElementById('edit-index').value);
+        const editId = document.getElementById('edit-id').value;
 
         if (!name || !phone || !style) {
             alert('Kripya Name, Phone aur Style zaroor bharein!');
             return;
         }
 
-        const now = new Date();
-        const datetime = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
         document.getElementById('loading').style.display = 'block';
 
         let payload = {};
-        if (editIndex === -1) {
-            payload = { action: "add", datetime, name, phone, material, size, style, total, advance, balance };
+        if (!editId) {
+            payload = { 
+                action: "add", 
+                datetime: getFormattedDateTime(), 
+                name, phone, material, size, style, total, advance, balance 
+            };
         } else {
-            const oldDatetime = document.getElementById('edit-datetime').value;
-            const oldName = document.getElementById('edit-oldname').value;
-            payload = { action: "update", oldDatetime, oldName, name, phone, material, size, style, total, advance, balance };
+            payload = { 
+                action: "update", 
+                id: editId, 
+                name, phone, material, size, style, total, advance, balance 
+            };
         }
 
         try {
@@ -396,9 +405,7 @@
         document.getElementById('advancePaid').value = item.advance || 0;
         document.getElementById('balanceAmount').value = item.balance || 0;
         
-        document.getElementById('edit-index').value = index;
-        document.getElementById('edit-datetime').value = item.datetime;
-        document.getElementById('edit-oldname').value = item.name;
+        document.getElementById('edit-id').value = item.id;
         
         document.getElementById('save-btn').textContent = "🔄 Update Booking";
         document.getElementById('form-title').textContent = "✏️ Edit Booking Details";
@@ -412,7 +419,8 @@
             document.getElementById('loading').style.display = 'block';
             
             try {
-                const deleteUrl = `${SCRIPT_URL}?action=delete&datetime=${encodeURIComponent(item.datetime)}&name=${encodeURIComponent(item.name)}`;
+                // Delete using Unique ID
+                const deleteUrl = `${SCRIPT_URL}?action=delete&id=${encodeURIComponent(item.id)}`;
                 await fetch(deleteUrl);
             } catch(e) {
                 console.error("Delete error:", e);
@@ -431,7 +439,7 @@
         document.getElementById('balanceAmount').value = '';
         document.getElementById('material').selectedIndex = 0;
         document.getElementById('size').selectedIndex = 0;
-        document.getElementById('edit-index').value = "-1";
+        document.getElementById('edit-id').value = "";
         document.getElementById('save-btn').textContent = "💾 Save Booking";
         document.getElementById('form-title').textContent = "➕ New Customer Booking & Enquiry";
     }
