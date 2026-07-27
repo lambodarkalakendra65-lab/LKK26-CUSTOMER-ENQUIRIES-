@@ -325,15 +325,22 @@
         document.getElementById('balanceAmount').value = balance >= 0 ? balance : 0;
     }
 
-    function getFormattedDateTime() {
-        const now = new Date();
-        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    // Single Helper function to format any raw date string to "DD MMM YYYY"
+    function cleanDateFormat(rawDateStr) {
+        if (!rawDateStr) return '';
+        const d = new Date(rawDateStr);
+        if (isNaN(d.getTime())) return rawDateStr; // Return as-is if invalid date
         
-        let day = String(now.getDate()).padStart(2, '0');
-        let month = months[now.getMonth()];
-        let year = now.getFullYear();
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        let day = String(d.getDate()).padStart(2, '0');
+        let month = months[d.getMonth()];
+        let year = d.getFullYear();
 
         return `${day} ${month} ${year}`;
+    }
+
+    function getFormattedDateTime() {
+        return cleanDateFormat(new Date());
     }
 
     async function loadData() {
@@ -365,9 +372,12 @@
                 ? `<span class="badge-paid">FULL PAID</span>` 
                 : (item.total > 0 ? `<span class="badge-pending">BAL: ₹${balanceVal}</span>` : `<span style="color:#757575;">Only Enquiry</span>`);
 
+            // Clean ISO Date to proper format (e.g., "27 Jul 2026")
+            const formattedDate = cleanDateFormat(item.datetime);
+
             row.innerHTML = `
                 <td data-label="Sr. No."><b>${index + 1}</b></td>
-                <td data-label="Date">${item.datetime || ''}</td>
+                <td data-label="Date">${formattedDate}</td>
                 <td data-label="Customer Name"><b>${item.name || ''}</b></td>
                 <td data-label="Phone">${item.phone || ''}</td>
                 <td data-label="Type / Size">${item.material || ''} (${item.size || ''})</td>
@@ -378,7 +388,7 @@
                 <td class="action-td">
                     <div class="action-btns">
                         <button class="btn-wa" onclick="sendWhatsAppMsg(${originalIndex})" title="Send Enquiry Message">💬 Msg</button>
-                        <button class="btn-receipt" onclick="generateAndCopyReceipt(${originalIndex})" title="Generate & Send Image Receipt">🧾 Receipt</button>
+                        <button class="btn-receipt" onclick="generateAndCopyReceipt(${originalIndex})" title="Generate & Send Image Receipt">Receipt</button>
                         <button class="btn-edit" onclick="editEnquiry(${originalIndex})">✏️ Edit</button>
                         <button class="btn-delete" onclick="deleteEnquiry(${originalIndex})">🗑️</button>
                     </div>
@@ -526,7 +536,7 @@
         const item = enquiries[index];
 
         // Populate Receipt Data
-        document.getElementById('r-date').innerText = item.datetime || '';
+        document.getElementById('r-date').innerText = cleanDateFormat(item.datetime);
         document.getElementById('r-name').innerText = item.name || '';
         document.getElementById('r-phone').innerText = item.phone || '';
         document.getElementById('r-material').innerText = item.material || '';
@@ -578,7 +588,7 @@
 
         const excelData = enquiries.map((item, idx) => ({
             "Sr. No.": idx + 1,
-            "Date": item.datetime,
+            "Date": cleanDateFormat(item.datetime),
             "Customer Name": item.name,
             "Phone Number": item.phone,
             "Material": item.material,
