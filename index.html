@@ -266,7 +266,7 @@
             <thead>
                 <tr>
                     <th>Sr. No.</th>
-                    <th>Date & Time</th>
+                    <th>Date</th>
                     <th>Customer Name</th>
                     <th>Phone</th>
                     <th>Type / Size</th>
@@ -287,7 +287,7 @@
         <h2>🌸 LAMBODAR KALA KENDRA 🌸</h2>
         <p>OFFICIAL BOOKING RECEIPT</p>
     </div>
-    <div class="row"><span>Date & Time:</span><strong id="r-date"></strong></div>
+    <div class="row"><span>Date:</span><strong id="r-date"></strong></div>
     <div class="row"><span>Customer Name:</span><strong id="r-name"></strong></div>
     <div class="row"><span>Mobile No:</span><strong id="r-phone"></strong></div>
     <div class="divider"></div>
@@ -327,9 +327,13 @@
 
     function getFormattedDateTime() {
         const now = new Date();
-        const optionsDate = { day: '2-digit', month: 'short', year: 'numeric' };
-        const optionsTime = { hour: '2-digit', minute: '2-digit', hour12: true };
-        return `${now.toLocaleDateString('en-GB', optionsDate)}, ${now.toLocaleTimeString('en-US', optionsTime)}`;
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        
+        let day = String(now.getDate()).padStart(2, '0');
+        let month = months[now.getMonth()];
+        let year = now.getFullYear();
+
+        return `${day} ${month} ${year}`;
     }
 
     async function loadData() {
@@ -363,7 +367,7 @@
 
             row.innerHTML = `
                 <td data-label="Sr. No."><b>${index + 1}</b></td>
-                <td data-label="Date & Time">${item.datetime || ''}</td>
+                <td data-label="Date">${item.datetime || ''}</td>
                 <td data-label="Customer Name"><b>${item.name || ''}</b></td>
                 <td data-label="Phone">${item.phone || ''}</td>
                 <td data-label="Type / Size">${item.material || ''} (${item.size || ''})</td>
@@ -574,7 +578,7 @@
 
         const excelData = enquiries.map((item, idx) => ({
             "Sr. No.": idx + 1,
-            "Date & Time": item.datetime,
+            "Date": item.datetime,
             "Customer Name": item.name,
             "Phone Number": item.phone,
             "Material": item.material,
