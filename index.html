@@ -1,14 +1,15 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lambodar Kala Kendra (2026) - Enquiry Manager</title>
+
   <style>
     :root {
-      --primary: #d35400; /* Festive Deep Orange */
-      --secondary: #f39c12; /* Saffron Gold */
-      --bg: #fdfaf6; /* Creamy Background */
+      --primary: #d35400; 
+      --secondary: #f39c12; 
+      --bg: #fdfaf6; 
       --card-bg: #ffffff;
       --text: #2c3e50;
     }
@@ -41,7 +42,7 @@
     }
 
     .container {
-      max-width: 950px;
+      max-width: 1000px;
       margin: 10px auto;
       background: var(--card-bg);
       padding: 25px;
@@ -68,7 +69,6 @@
       border: 1.5px solid #e0e0e0;
       border-radius: 6px;
       font-size: 14px;
-      transition: border-color 0.3s;
     }
 
     input[type="text"]:focus, input[type="tel"]:focus, select:focus {
@@ -105,12 +105,6 @@
       font-weight: bold;
       width: 100%;
       box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      transition: transform 0.1s, opacity 0.2s;
-    }
-
-    button.add-btn:hover {
-      opacity: 0.95;
-      transform: translateY(-1px);
     }
 
     button.export-btn {
@@ -122,11 +116,6 @@
       cursor: pointer;
       font-size: 14px;
       font-weight: bold;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    button.export-btn:hover {
-      background-color: #1f618d;
     }
 
     table {
@@ -139,8 +128,9 @@
 
     th, td {
       border: 1px solid #eee;
-      padding: 12px 10px;
+      padding: 10px 8px;
       text-align: left;
+      font-size: 14px;
     }
 
     th {
@@ -153,31 +143,22 @@
       background-color: #25D366;
       color: white;
       text-decoration: none;
-      padding: 8px 12px;
+      padding: 8px 10px;
       border-radius: 5px;
       display: inline-block;
       font-weight: bold;
       font-size: 13px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .wa-btn:hover {
-      background-color: #1eb954;
     }
 
     .delete-btn {
       background-color: #e74c3c;
       color: white;
       border: none;
-      padding: 8px 12px;
+      padding: 8px 10px;
       border-radius: 5px;
       cursor: pointer;
       font-weight: bold;
       font-size: 13px;
-    }
-
-    .delete-btn:hover {
-      background-color: #c0392b;
     }
 
     .badge {
@@ -188,14 +169,13 @@
       font-weight: bold;
     }
 
-    .badge-eco {
-      background-color: #e8f8f5;
-      color: #117a65;
-    }
-
-    .badge-pop {
-      background-color: #fef9e7;
-      color: #b7950b;
+    .badge-eco { background-color: #e8f8f5; color: #117a65; }
+    .badge-pop { background-color: #fef9e7; color: #b7950b; }
+    
+    .date-text {
+      color: #7f8c8d;
+      font-size: 12px;
+      white-space: nowrap;
     }
   </style>
 </head>
@@ -272,6 +252,7 @@
   <table id="enquiryTable">
     <thead>
       <tr>
+        <th>Date</th>
         <th>Customer Name</th>
         <th>Phone Number</th>
         <th>Material</th>
@@ -304,16 +285,15 @@
     tableBody.innerHTML = ""; 
 
     dataList.forEach((item, index) => {
-      // Craft an attractive Hinglish Message
       const message = `*|| ॐ गं गणपतये नमः ||* 🙏\n\n*LAMBODAR KALA KENDRA (2026)* me aapka swagat hai, ${item.name} ji! 🌸\n\nAapki *Ganesh Murti* ki enquiry ke liye bahut bahut dhanyawad:\n\n📌 *Details:*\n• *Type:* ${item.murtiType}\n• *Size:* ${item.size}\n• *Material:* ${item.material}\n\nHum aapko photo gallery aur price details share kar rahe hain. Agar aapki koi special requirement ya customization request hai, toh zaroor batayein!\n\n_Bappa Morya!_ ✨`;
       
       const encodedMessage = encodeURIComponent(message);
       const waLink = `https://wa.me/${item.phone}?text=${encodedMessage}`;
-
-      const badgeClass = item.material.includes("Eco") ? "badge-eco" : "badge-pop";
+      const badgeClass = item.material && item.material.includes("Eco") ? "badge-eco" : "badge-pop";
 
       const newRow = document.createElement("tr");
       newRow.innerHTML = `
+        <td class="date-text">${item.dateString}</td>
         <td><strong>${item.name}</strong></td>
         <td>+${item.phone}</td>
         <td><span class="badge ${badgeClass}">${item.material}</span></td>
@@ -346,8 +326,14 @@
 
     phone = phone.replace(/[^0-9]/g, '');
 
+    // Get current local date & time automatically
+    const now = new Date();
+    const dateString = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
     const enquiries = getSavedEnquiries();
-    enquiries.push({ name, phone, material, size, murtiType });
+    
+    // Add new entry at the beginning (newest first)
+    enquiries.unshift({ name, phone, material, size, murtiType, dateString });
 
     localStorage.setItem("lambodarEnquiries", JSON.stringify(enquiries));
 
@@ -376,7 +362,6 @@
     renderTable(filtered);
   }
 
-  // Export Data to Excel/CSV file
   function exportToCSV() {
     const enquiries = getSavedEnquiries();
     if (enquiries.length === 0) {
@@ -384,10 +369,9 @@
       return;
     }
 
-    let csvContent = "data:text/csv;charset=utf-8,Name,Phone,Material,Size,Details\n";
-
+    let csvContent = "data:text/csv;charset=utf-8,Date,Name,Phone,Material,Size,Details\n";
     enquiries.forEach(item => {
-      csvContent += `"${item.name}","+${item.phone}","${item.material}","${item.size}","${item.murtiType}"\n`;
+      csvContent += `"${item.dateString}","${item.name}","+${item.phone}","${item.material}","${item.size}","${item.murtiType}"\n`;
     });
 
     const encodedUri = encodeURI(csvContent);
