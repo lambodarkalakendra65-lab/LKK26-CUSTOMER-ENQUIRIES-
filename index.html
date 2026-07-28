@@ -201,12 +201,12 @@
         
         #loading { text-align: center; padding: 15px; font-weight: bold; color: var(--deep-saffron); display: none; }
 
-        /* Hidden Receipt Template for Auto Rendering */
+        /* Receipt Card Design */
         #receipt-card {
             position: absolute;
             left: -9999px;
             top: -9999px;
-            width: 400px;
+            width: 420px;
             background: #ffffff;
             border: 3px solid #e65100;
             border-radius: 12px;
@@ -218,18 +218,32 @@
         #receipt-card .header {
             text-align: center;
             border-bottom: 2px dashed #ff6f00;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
+            padding-bottom: 12px;
+            margin-bottom: 12px;
         }
 
-        #receipt-card .header h2 { margin: 0; color: #880e4f; font-size: 1.3rem; }
+        #receipt-card .header h2 { margin: 0; color: #880e4f; font-size: 1.35rem; }
         #receipt-card .header p { margin: 3px 0 0 0; font-size: 0.8rem; color: #e65100; font-weight: bold; }
+
+        #receipt-card .shop-info {
+            font-size: 0.78rem;
+            color: #4e342e;
+            text-align: center;
+            margin-top: 6px;
+            line-height: 1.35;
+        }
+
+        #receipt-card .shop-info .social {
+            color: #c2185b;
+            font-weight: bold;
+            margin-top: 4px;
+        }
 
         #receipt-card .row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85rem; }
         #receipt-card .row strong { color: #880e4f; }
         
         #receipt-card .divider { border-bottom: 1px solid #ddd; margin: 10px 0; }
-        #receipt-card .footer { text-align: center; margin-top: 15px; font-size: 0.8rem; font-weight: bold; color: #ff6f00; }
+        #receipt-card .footer { text-align: center; margin-top: 15px; font-size: 0.85rem; font-weight: bold; color: #ff6f00; }
     </style>
 </head>
 <body>
@@ -329,6 +343,11 @@
     <div class="header">
         <h2>🌸 LAMBODAR KALA KENDRA 🌸</h2>
         <p>OFFICIAL BOOKING RECEIPT</p>
+        <div class="shop-info">
+            📍 60 Feet Road, DG Nagar, In front of Kalika Mata Temple, Kalpataru Ground (Gujarati Parivar Garba Ground), Vasai West<br>
+            📞 Contact: 84830 08341 / 8698582697
+            <div class="social">🌐 FB & Insta: @lambodarkalakendra</div>
+        </div>
     </div>
     <div class="row"><span>Date:</span><strong id="r-date"></strong></div>
     <div class="row"><span>Customer Name:</span><strong id="r-name"></strong></div>
@@ -368,7 +387,6 @@
         document.getElementById('balanceAmount').value = balance >= 0 ? balance : 0;
     }
 
-    // Helper function to format raw date string to "DD MMM YYYY"
     function cleanDateFormat(rawDateStr) {
         if (!rawDateStr) return '';
         const d = new Date(rawDateStr);
@@ -554,7 +572,6 @@
         document.getElementById('form-title').textContent = "➕ New Customer Booking & Enquiry";
     }
 
-    // Send General WhatsApp Message
     function sendWhatsAppMsg(index) {
         if(index === -1) return;
         const item = enquiries[index];
@@ -572,7 +589,6 @@
         window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
     }
 
-    // Instant Image Receipt Copy & Open WhatsApp with Thank You Message
     async function generateAndCopyReceipt(index) {
         if(index === -1) return;
         const item = enquiries[index];
@@ -609,6 +625,9 @@
                 const thankYouMsg = `Namaste *${item.name}* ji! 🙏%0A%0A` +
                     `*Lambodar Kala Kendra* me booking karne ke liye aapka bohot bohot dhanyawad! 🌸%0A%0A` +
                     `Aapki booking receipt ki photo attach kar di gayi hai. Aapka order successfully confirm ho gaya hai.%0A%0A` +
+                    `📍 *Address:* 60 Feet Road, DG Nagar, In front of Kalika Mata Temple, Kalpataru Ground, Vasai West%0A` +
+                    `📞 *Contact:* 84830 08341 / 8698582697%0A` +
+                    `🌐 *FB & Insta:* @lambodarkalakendra%0A%0A` +
                     `*Ganpati Bappa Morya! 🚩*`;
 
                 window.open(`https://wa.me/${cleanPhone}?text=${thankYouMsg}`, '_blank');
